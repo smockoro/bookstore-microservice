@@ -22,8 +22,43 @@ type bookUsecase struct {
 }
 
 func (bu *bookUsecase) Make(ctx context.Context) error {
+	MockList := []string{
+		"9784297107277",
+		"9784295000969",
+		"9784798142418",
+		"9784908686030",
+		"9784873118468",
+		"9784873117522",
+		"9784774183923",
+	}
+	for _, isbn := range MockList {
+		book, err := bu.apiClient.Get(isbn)
+		if err != nil {
+			return err
+		}
+		if book != nil {
+			err = bu.csvRepo.Save(ctx, book)
+			if err != nil {
+				return err
+			}
+		}
 
-	books := bu.apiClient.Get
-	bu.csvRepo.Save(ctx, books)
+	}
+	/*
+		for i := 800000000; i <= 999999999; i++ {
+			isbn := fmt.Sprintf("%d%d%d", model.PREFIX, model.JA, i)
+			fmt.Println("isbn: ", isbn)
+			book, err := bu.apiClient.Get(isbn)
+			if err != nil {
+				return err
+			}
+			if book != nil {
+				err = bu.csvRepo.Save(ctx, book)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	*/
 	return nil
 }

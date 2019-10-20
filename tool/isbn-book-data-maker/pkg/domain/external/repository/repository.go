@@ -8,5 +8,5 @@ import (
 
 // CSVRepository : Make Book data csv file.
 type CSVRepository interface {
-	Save(context.Context, []*model.Book) error
+	Save(context.Context, *model.Book) error
 }

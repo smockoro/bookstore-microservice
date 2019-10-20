@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	Iapi "github.com/smockoro/bookstore-microservice/tool/isbn-book-data-maker/pkg/domain/external/api"
+	"github.com/smockoro/bookstore-microservice/tool/isbn-book-data-maker/pkg/domain/model"
 )
 
 // NewGoogleBookAPIClient : Constractor Injector for Google Book API
@@ -20,7 +21,7 @@ type googleBookAPIClient struct {
 	endpoint string
 }
 
-func (gbac *googleBookAPIClient) Get(isbn string) (*Iapi.ResponseJSON, error) {
+func (gbac *googleBookAPIClient) Get(isbn string) (*model.Book, error) {
 	query := "q=isbn:"
 	requestURL := gbac.endpoint + "?" + query + isbn
 	req, err := http.NewRequest("GET", requestURL, nil)
@@ -40,7 +41,10 @@ func (gbac *googleBookAPIClient) Get(isbn string) (*Iapi.ResponseJSON, error) {
 		return nil, err
 	}
 
-	return data, nil
+	if data.TotalItems == 1 {
+		return data.Items[0], nil
+	}
+	return nil, nil
 }
 
 func decodeBody(resp *http.Response, out interface{}) error {
